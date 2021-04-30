@@ -12,7 +12,7 @@ export class AuthGuardService {
 
   public canActivate(route: ActivatedRouteSnapshot){
     let isAccessible = false;
-    let sub = this.authService.currentUser.subscribe(user=> {
+    /*let sub = this.authService.currentUser.subscribe(user=> {
       if(user && (user.role == Role.Admin || user.role == Role.Student || user.role == Role.Teacher)){
         isAccessible =  true;
       }
@@ -21,6 +21,21 @@ export class AuthGuardService {
     if(!isAccessible){
       this.router.navigate(["/login"])
     }
-    return isAccessible;
+    return isAccessible;*/
+    return new Promise((resolve, reject) => {
+      this.authService.currentUser.subscribe(user=> {
+        if(user && (user.role == Role.Admin || user.role == Role.Student || user.role == Role.Teacher)){
+          resolve(true);
+        }
+        else{
+          this.router.navigate(["/login"]);
+          resolve(false);
+        }
+      },
+      err=>{
+        console.log(err);
+        reject(false);
+      })
+    });
   }
 }
